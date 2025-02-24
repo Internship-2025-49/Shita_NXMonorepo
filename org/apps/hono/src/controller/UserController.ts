@@ -1,15 +1,12 @@
 import { drizzle } from 'drizzle-orm/mysql2';
 import type { Context } from "hono";
 // import prisma from "../../prisma/client/index.js";
-import  { User }  from "../db/schema.js";
+import  { User }  from "../db/schema";
 import { asc, eq } from "drizzle-orm";
-import { db } from "../db/index.js";
+import { db } from "../db/index";
 import { useEffect } from 'react';
 
 
-/**
- * Getting all posts
- */
 export const getUsers = async (c: Context) => {
     try {
         //get all posts

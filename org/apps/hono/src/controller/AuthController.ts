@@ -1,7 +1,7 @@
 import type { Context } from "hono";
 import { sign } from "hono/jwt";
 
-import dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 dotenv.config()
 
 const SECRET_KEY: any = process.env.KEY;

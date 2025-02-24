@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "NodeNext",
+    "module": "EsNext",
     "strict": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "skipLibCheck": true,
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
+    "moduleResolution": "Node",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
   }

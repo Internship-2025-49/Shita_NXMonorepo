@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { Routes } from './routes/index.js'
+import { Routes } from './routes/index'
 import { handle } from 'hono/vercel'
 import { cors } from 'hono/cors'
 

@@ -1,11 +1,11 @@
 import { Hono } from 'hono';
 import { jwt } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
-import { db } from '../db/index.js'
-import dotenv from 'dotenv'
-import { createUsers, deleteUser, getUserById, getUsers, updateUser } from '../controller/UserController.js';
-import { apiKeyAuth } from '../middleware/auth.js';
-import { loginUser } from '../controller/AuthController.js';
+import { db } from '../db/index'
+import * as dotenv from 'dotenv';
+import { createUsers, deleteUser, getUserById, getUsers, updateUser } from '../controller/UserController';
+import { apiKeyAuth } from '../middleware/auth';
+import { loginUser } from '../controller/AuthController';
 
 dotenv.config();
 
