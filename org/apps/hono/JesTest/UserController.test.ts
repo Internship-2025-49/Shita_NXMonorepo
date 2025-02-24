@@ -9,6 +9,10 @@ jest.mock("../src/db/index", () => ({
     }),
     insert: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(() => ({
+      where: jest.fn().mockResolvedValue(undefined), 
+    })),
+
   },
 }));
 
@@ -120,5 +124,25 @@ describe('UserController test', () => {
     expect(updateTest.json).toHaveBeenCalledWith(mockUpdatedUser);
   });
 
-
+  test("deleteUsers test", async () => {
+    const userId = 1;
+  
+    const deleteTest = {
+      req: {
+        param: jest.fn().mockReturnValue(userId),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
+  
+    (db.delete as jest.Mock).mockReturnValue({
+      where: jest.fn().mockResolvedValue(undefined),
+    });
+  
+    await deleteUser(deleteTest);
+  
+    expect(deleteTest.json).toHaveBeenCalledWith({
+      statusCode: 200,
+      message: "User Data was Deleted Successfully!",
+    });
+  });
 })
