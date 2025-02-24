@@ -8,6 +8,7 @@ jest.mock("../src/db/index", () => ({
       from: jest.fn(),
     }),
     insert: jest.fn(),
+    update: jest.fn(),
   },
 }));
 
@@ -76,4 +77,48 @@ describe('UserController test', () => {
     expect(createTest.json).toHaveBeenCalledWith(mockUser);
   });
   
+  test("updateUsers test", async () => {
+    const userId = 1;
+  
+    const updateTest = {
+      req: {
+        param: jest.fn().mockReturnValue(userId),
+        json: jest.fn().mockResolvedValue({
+          username: "updatedUser",
+          name: "Updated Name",
+          address: "Updated Address",
+          phone: "9876543210",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
+  
+    const mockUpdatedUser = [
+      {
+        id: userId,
+        username: "updatedUser",
+        name: "Updated Name",
+        address: "Updated Address",
+        phone: "9876543210",
+      },
+    ];
+  
+    (db.update as jest.Mock).mockReturnValue({
+      set: jest.fn().mockReturnValue({
+        where: jest.fn().mockResolvedValue(undefined),
+      }),
+    });
+  
+    (db.select as jest.Mock).mockReturnValue({
+      from: jest.fn().mockReturnValue({
+        where: jest.fn().mockResolvedValue(mockUpdatedUser),
+      }),
+    });
+  
+    await updateUser(updateTest);
+  
+    expect(updateTest.json).toHaveBeenCalledWith(mockUpdatedUser);
+  });
+
+
 })
