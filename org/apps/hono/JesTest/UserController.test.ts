@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { getUserById, getUsers } from "../src/controller/UserController";
+import { createUsers, deleteUser, getUserById, getUsers, updateUser } from "../src/controller/UserController";
 import { db } from "../src/db/index";
 
 jest.mock("../src/db/index", () => ({
@@ -7,6 +7,7 @@ jest.mock("../src/db/index", () => ({
     select: jest.fn().mockReturnValue({
       from: jest.fn(),
     }),
+    insert: jest.fn(),
   },
 }));
 
@@ -46,15 +47,33 @@ describe('UserController test', () => {
     expect(getUserByIdTest.json).toHaveBeenCalledWith(mockUsers)
   });
 
-  test("postUsers test", async () => {
-    
+  test("createUsers test", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockResolvedValue({
+          username: "user test",
+          name: "nama test",
+          address: "alamat address",
+          phone: "12345678890",
+        }),
+      },
+      json: jest.fn(), 
+    } as unknown as Context;
+  
+    const mockUser = {
+      username: "user test",
+      name: "nama test",
+      address: "alamat address",
+      phone: "12345678890",
+    };
+  
+    (db.insert as jest.Mock).mockReturnValue({
+      values: jest.fn().mockResolvedValue(mockUser),
+    });
+  
+    await createUsers(createTest); 
+  
+    expect(createTest.json).toHaveBeenCalledWith(mockUser);
   });
-
-  test("putUsers test", async () => {
-    
-  });
-
-  test("deleteUsers test", async () => {
-    
-  });
+  
 })
