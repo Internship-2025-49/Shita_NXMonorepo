@@ -290,3 +290,41 @@ describe('createUsers test', () => {
 
 
   })
+
+  describe('deleteUser test', () => {
+
+    test('deleteUser id exist', async () => {
+        const userId = 6;
+        const deleteTest = {
+            req: {
+                param: jest.fn().mockReturnValue(userId),
+            },
+            json: jest.fn(),
+        } as unknown as Context;
+
+        await deleteUser(deleteTest);
+
+        expect(deleteTest.json).toHaveBeenCalledWith({
+          statusCode : 200,
+          message: 'User Data was Deleted Successfully!',
+        });
+    });
+
+    test('deleteUser id doesnt exist', async () => {
+      const userId = 1;
+      const deleteTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      await deleteUser(deleteTest);
+
+      expect(deleteTest.json).toHaveBeenCalledWith({
+        statusCode : 200,
+        message: 'User Data was Deleted Successfully!',
+      });
+    });
+
+  })
