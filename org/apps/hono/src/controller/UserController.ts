@@ -119,7 +119,7 @@ export async function updateUser(c: Context) {
             .where(eq(User.id, userId));
 
       //return JSON
-      return c.json(updatedUser);
+      return c.json(updatedUser[0]);
 
   } catch (e: unknown) {
       console.error(`Error updating user: ${e}`);

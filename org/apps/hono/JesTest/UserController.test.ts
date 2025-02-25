@@ -174,3 +174,119 @@ describe('createUsers test', () => {
     });
 
   })
+
+
+  describe('updateUser describe', () => {
+    test('updateUser update all', async () => {
+      const userId = 7;
+      const updateTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+              json: jest.fn().mockResolvedValue({
+                  username: 'update username',
+                  name: 'update name',
+                  address: 'update address',
+                  phone: '1234567890',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      const updatedUserData = {
+          username: 'update username',
+          name: 'update name',
+          address: 'update address',
+          phone: '1234567890',
+      };
+
+      await updateUser(updateTest);
+
+      expect(updateTest.json).toHaveBeenCalledWith(expect.objectContaining(updatedUserData));
+    });
+
+    test('updateUser update username only', async () => {
+      const userId = 8;
+      const updateTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+              json: jest.fn().mockResolvedValue({
+                  username: 'update username',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      const updatedUserData = {
+          username: 'update username',
+      };
+
+      await updateUser(updateTest);
+
+      expect(updateTest.json).toHaveBeenCalledWith(expect.objectContaining(updatedUserData));
+    });
+
+    test('updateUser update name only', async () => {
+      const userId = 9;
+      const updateTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+              json: jest.fn().mockResolvedValue({
+                  name: 'update name',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      const updatedUserData = {
+          name: 'update name',
+      };
+
+      await updateUser(updateTest);
+
+      expect(updateTest.json).toHaveBeenCalledWith(expect.objectContaining(updatedUserData));
+    });
+
+    test('updateUser update address only', async () => {
+      const userId = 9;
+      const updateTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+              json: jest.fn().mockResolvedValue({
+                  address: 'update address',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      const updatedUserData = {
+          address: 'update address',
+      };
+
+      await updateUser(updateTest);
+
+      expect(updateTest.json).toHaveBeenCalledWith(expect.objectContaining(updatedUserData));
+    });
+
+    test('updateUser update phone only', async () => {
+      const userId = 9;
+      const updateTest = {
+          req: {
+              param: jest.fn().mockReturnValue(userId),
+              json: jest.fn().mockResolvedValue({
+                  phone: '111111111111',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+
+      const updatedUserData = {
+        phone: '111111111111',
+      };
+
+      await updateUser(updateTest);
+
+      expect(updateTest.json).toHaveBeenCalledWith(expect.objectContaining(updatedUserData));
+    });
+
+
+  })
