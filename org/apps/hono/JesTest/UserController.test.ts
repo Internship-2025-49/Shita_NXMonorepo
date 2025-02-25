@@ -58,3 +58,119 @@ describe('getUsers test', () => {
   })
 
 })
+
+describe('createUsers test', () => {
+
+  test('createUsers insert all', async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockResolvedValue({
+          username: 'user test',
+          name: 'nama user test',
+          address: 'alamat test',
+          phone: '0000000000',
+      }),
+      },json: jest.fn(),
+    } as unknown as Context;
+
+    const newUserData = {
+      username: 'user test',
+      name: 'nama user test',
+      address: 'alamat test',
+      phone: '0000000000',
+    }
+
+    await createUsers(createTest);
+
+    expect(createTest.json).toHaveBeenCalledWith(expect.objectContaining(newUserData));
+    });
+
+    test('createUser without username', async () => {
+      const createTest = {
+          req: {
+              json: jest.fn().mockResolvedValue({
+                  name: 'nama2 user test',
+                  address: 'alamat2 test',
+                  phone: '00000000002',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+  
+      await createUsers(createTest);
+      expect(createTest.json).toHaveBeenCalledWith(
+        {
+          message: "All fields are required: username, name, address, phone",
+          statusCode: 400,
+        },
+        400
+      );
+    });
+
+    test('createUser without name', async () => {
+      const createTest = {
+          req: {
+              json: jest.fn().mockResolvedValue({
+                  username: 'username2 user test',
+                  address: 'alamat2 test',
+                  phone: '00000000002',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+  
+      await createUsers(createTest);
+      expect(createTest.json).toHaveBeenCalledWith(
+        {
+          message: "All fields are required: username, name, address, phone",
+          statusCode: 400,
+        },
+        400
+      );
+    });
+
+    test('createUser without address', async () => {
+      const createTest = {
+          req: {
+              json: jest.fn().mockResolvedValue({
+                  username: 'username2 user test',
+                  name: 'nama2 test',
+                  phone: '00000000002',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+  
+      await createUsers(createTest);
+      expect(createTest.json).toHaveBeenCalledWith(
+        {
+          message: "All fields are required: username, name, address, phone",
+          statusCode: 400,
+        },
+        400
+      );
+    });
+
+    test('createUser without phone', async () => {
+      const createTest = {
+          req: {
+              json: jest.fn().mockResolvedValue({
+                  username: 'username2 user test',
+                  name: 'nama2 test',
+                  address: 'alamat2 test',
+              }),
+          },
+          json: jest.fn(),
+      } as unknown as Context;
+  
+      await createUsers(createTest);
+      expect(createTest.json).toHaveBeenCalledWith(
+        {
+          message: "All fields are required: username, name, address, phone",
+          statusCode: 400,
+        },
+        400
+      );
+    });
+
+  })
