@@ -7,9 +7,28 @@ const { join } = require('path');
 
 module.exports = {
   plugins: {
-    tailwindcss: {
-      config: join(__dirname, 'tailwind.config.js'),
-    },
+
+    // '@tailwindcss/postcss7-compat': {},
+    // autoprefixer: {},
+
+    // tailwindcss: {
+    //   config: join(__dirname, 'tailwind.config.js'),
+    // },
     autoprefixer: {},
+    "@tailwindcss/postcss": {},
+
+    //baru ditambahin
+    // "postcss-import": {},
+    // "tailwindcss/nesting": {},
+    // tailwindcss: {},
+    // autoprefixer: {},
   },
+  
+    // plugins: {
+    //   "postcss-import": {},
+    //   "@tailwindcss/postcss": {},
+    //   tailwindcss: {},
+    //   autoprefixer: {},
+    // },
+  
 };
