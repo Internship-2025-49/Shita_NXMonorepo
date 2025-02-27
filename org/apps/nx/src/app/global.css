@@ -1,5 +1,7 @@
 @tailwind base;
 
+@plugin "tailwindcss-animate";
+
 @custom-variant dark (&:is(.dark *));
 @tailwind components;
 @tailwind utilities;
@@ -419,8 +421,6 @@ summary svg {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -452,6 +452,8 @@ summary svg {
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
 }
 
 .dark {

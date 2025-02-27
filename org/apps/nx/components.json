@@ -1,3 +1,4 @@
+
 {
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "new-york",
@@ -11,11 +12,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "org/apps/shared/src/lib/components",
-    "utils": "org/apps/shared/src/lib/utils",
-    "ui": "org/apps/shared/src/lib/components/ui",
-    "lib": "org/apps/shared/src/lib",
-    "hooks": "org/apps/shared/src/hooks"
+    "components": "@org/apps/shared/components/src",
+    "utils": "@org/apps/shared/lib/utils",
+    "ui": "@org/apps/shared/components/src/ui",
+    "lib": "@org/apps/shared/components/src/lib",
+    "hooks": "@org/apps/shared/src/hooks"
   },
   "iconLibrary": "lucide"
 }
