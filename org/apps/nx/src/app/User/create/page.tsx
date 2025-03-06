@@ -52,41 +52,43 @@ export default function PersonCreate() {
     };
 
     return (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
-            <span className="font-bold py-2 block text-2xl text-center mb-5">Add Data User</span>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
+            <span className="font-bold py-2 block text-2xl text-center mb-5 text-gray-700">Add User Data</span>
             
-            <Card className="w-full shadow-lg border">
-                <CardHeader>
-                    <CardContent>
-                        <form onSubmit={addUser} className="grid gap-6">
-                            <div className="flex flex-col space-y-2">
-                                <Label htmlFor="username" className="text-lg">Username</Label>
-                                <Input id="username" placeholder="Username" className="text-lg p-3" onChange={(e: any) => setUsername(e.target.value)}/>
-                            </div>
-
-                            <div className="flex flex-col space-y-2">
-                                <Label htmlFor="name" className="text-lg">Name</Label>
-                                <Input id="name" placeholder="Name" className="text-lg p-3" onChange={(e: any) => setName(e.target.value)}/>
-                            </div>
-
-                            <div className="flex flex-col space-y-2">
-                                <Label htmlFor="address" className="text-lg">Address</Label>
-                                <Input id="address" placeholder="Address" className="text-lg p-3" onChange={(e: any) => setAddress(e.target.value)}/>
-                            </div>
-
-                            <div className="flex flex-col space-y-2">
-                                <Label htmlFor="phone" className="text-lg">Phone</Label>
-                                <Input id="phone" placeholder="+62" className="text-lg p-3" onChange={(e: any) => setPhone(e.target.value)}/>
-                            </div>
-
-                            <div className="flex justify-center">
-                                <Button type="submit" className="w-full max-w-sm p-3 text-white bg-black text-lg hover:bg-gray-900">
-                                    Submit
-                                </Button>
-                            </div>
-                        </form>
-                    </CardContent>
+            <Card className="w-full shadow-lg border border-gray-400 bg-white">
+                <CardHeader className="bg-gray-700 text-white text-center py-3 rounded-t-md">
+                    <h3 className="text-lg font-semibold">User Form</h3>
                 </CardHeader>
+
+                <CardContent>
+                    <form onSubmit={addUser} className="grid gap-5">
+                        <div className="flex flex-col space-y-2 ml-5 mr-5 mt-5">
+                            <Label htmlFor="username" className="text-gray-700">Username</Label>
+                            <Input id="username" placeholder="Username" className="p-2 border border-gray-400" onChange={(e: any) => setUsername(e.target.value)}/>
+                        </div>
+
+                        <div className="flex flex-col space-y-2 ml-5 mr-5">
+                            <Label htmlFor="name" className="text-gray-700">Name</Label>
+                            <Input id="name" placeholder="Name" className="p-2 border border-gray-400" onChange={(e: any) => setName(e.target.value)}/>
+                        </div>
+
+                        <div className="flex flex-col space-y-2 ml-5 mr-5">
+                            <Label htmlFor="address" className="text-gray-700">Address</Label>
+                            <Input id="address" placeholder="Address" className="p-2 border border-gray-400" onChange={(e: any) => setAddress(e.target.value)}/>
+                        </div>
+
+                        <div className="flex flex-col space-y-2 ml-5 mr-5">
+                            <Label htmlFor="phone" className="text-gray-700">Phone</Label>
+                            <Input id="phone" placeholder="+62" className="p-2 border border-gray-400" onChange={(e: any) => setPhone(e.target.value)}/>
+                        </div>
+
+                        <div className="flex justify-center">
+                            <Button type="submit" className="w-full p-2 text-white bg-gray-700 hover:bg-gray-800">
+                                Submit
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
             </Card>
 
             {/* Alert Dialog */}
@@ -107,7 +109,6 @@ export default function PersonCreate() {
                 </AlertDialogContent>
             </AlertDialog>
         </div>
-
     );
 }
 
