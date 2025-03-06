@@ -4,10 +4,21 @@ import useSWR from "swr";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
 import Link from "next/link";
-import { fetcher } from "../libs/indes";
+import { ChevronDown } from "lucide-react";
+import { fetcher } from "../lib";
+import { Button } from "@/components/ui/button";
 import DataTable from "../components/tableUser";
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Label, Input, DialogFooter, AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, DialogTrigger } from "@components";
-import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Users() {
     const [userList, setUserList] = useState<UserModel[]>([]);
@@ -82,7 +93,7 @@ export default function Users() {
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-5">
-                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-500 text-red-700 hover:bg-red-100" onClick={() => deleteUser(row.original.id)}>
+                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => deleteUser(row.original.id)}>
                         Delete
                     </Button>
 
@@ -99,19 +110,28 @@ export default function Users() {
     ];
 
     return (
-            <div className="container mx-auto py-10">
-                <div className="flex items-center justify-start">
-                    <h2 className="text-2xl font-bold mb-7 ml-15 mr-243">
-                        All Data: {userList.length}
-                    </h2>
+        <div className="container mx-auto py-10">
+            <div className="flex items-center justify-start bg-gray-700 p-4 rounded-lg shadow-md w-[1010px] mb-5 mx-auto">
+              <h2 className="text-2xl ml-6 text-white">
+                All Data: {userList.length}
+              </h2>
 
-                    <Link href="/User/create">
-                        <Button className="mb-7 bg-green-800 hover:bg-green-700 text-white flex items-center gap-2">
-                        <Plus size={20} />
-                        </Button>
-                    </Link>
+              <Link href="/User/create" className="ml-auto">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="group">
+                      <Button variant="ghost"><ChevronDown className="text-white group-hover:text-black transition-colors" size={20} /></Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent className="w-56">
+                        <DropdownMenuItem>
+                          Add Data
+                          <DropdownMenuShortcut></DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+              </Link>
             </div>
-    
+
             <div className="w-full overflow-auto">
                 <DataTable columns={columns} data={userList} />
             </div>
@@ -184,7 +204,7 @@ export default function Users() {
                         <AlertDialogDescription>Your changes have been saved.</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setIsAlertOpen(false)}>Close</AlertDialogAction>
+                        <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsAlertOpen(false)}>Close</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

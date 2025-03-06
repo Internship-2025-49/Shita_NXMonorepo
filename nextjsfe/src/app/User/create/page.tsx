@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
-import { Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@components';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components';
-import { Label } from '@components';
-import { Input } from '@components';
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@components';
-
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Label} from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function PersonCreate() {
     const router = useRouter();
@@ -52,25 +51,11 @@ export default function PersonCreate() {
     };
 
     return (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md">
-            <span className="font-bold py-2 block text-2xl text-center mb-5 text-gray-700">Add User Data</span>
-            
-            <Dialog>
-            <DialogTrigger className='bg-red-500'>Open</DialogTrigger>
-            <DialogContent className='z-10'>
-                <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                    This action cannot be undone. This will permanently delete your account
-                    and remove your data from our servers.
-                </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-            </Dialog>
+        <div className="fixed inset-0 flex items-center justify-center">
 
-            <Card className="w-full shadow-lg border border-gray-400 bg-white">
+            <Card className="w-full max-w-lg shadow-lg border border-gray-400 bg-white p-6">
                 <CardHeader className="bg-gray-700 text-white text-center py-3 rounded-t-md">
-                    <h3 className="text-lg font-semibold">User Form</h3>
+                    <h3 className="text-lg font-semibold">Add User Form</h3>
                 </CardHeader>
 
                 <CardContent>
