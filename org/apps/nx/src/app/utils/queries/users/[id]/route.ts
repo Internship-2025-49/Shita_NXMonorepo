@@ -7,8 +7,7 @@ export async function GET(request : NextRequest,{ params }: { params: { id: numb
         const token = await getAuthToken();
         const apiKey = await getApiKey(token);
 
-        const { id } = await params;
-        const res = await fetch(`http://localhost:3000/api/users/data/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/users/data/${params.id}`, {
             next: { revalidate: 10 },
             headers: {
                 'Authorization': `Bearer ${token}`,

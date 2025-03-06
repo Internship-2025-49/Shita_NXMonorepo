@@ -6,10 +6,10 @@ import {
     CardContent,
     CardFooter,
     CardHeader,
-} from "@/components/ui/card"
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from "@components"
+import { Label } from '@components';
+import { Input } from '@components';
+import { Button } from '@components';
 import { useRouter } from 'next/navigation';
 import { fetcher } from '@/app/libs/indes';
 

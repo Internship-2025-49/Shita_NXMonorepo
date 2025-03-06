@@ -2,8 +2,8 @@
 import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { Label } from '@components';
+import { Input } from '@components';
 import {
     Dialog,
     DialogContent,
@@ -11,8 +11,8 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@components";
+import { Button } from "@components";
 import { 
     AlertDialog, 
     AlertDialogAction, 
@@ -22,7 +22,7 @@ import {
     AlertDialogFooter, 
     AlertDialogHeader, 
     AlertDialogTitle 
-} from '@/components/ui/alert-dialog';
+} from '@components';
 import { fetcher } from "@/app/libs/indes";
 
 export default function PostEdit({ params }: { params: Promise<{ id: number }> }) {
@@ -92,7 +92,7 @@ export default function PostEdit({ params }: { params: Promise<{ id: number }> }
                                 id="username" 
                                 className="col-span-3" 
                                 value={username} 
-                                onChange={(e) => setName(e.target.value)}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
 

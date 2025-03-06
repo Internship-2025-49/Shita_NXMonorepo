@@ -1,4 +1,5 @@
-import './global.css';
+// import './global.css';
+import './css/test.css'
 
 export const metadata = {
   title: 'Welcome to nx',

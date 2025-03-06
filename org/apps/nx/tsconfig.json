@@ -32,6 +32,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@components": [
+        "../shared/components/src/index.ts"
       ]
     }
   },

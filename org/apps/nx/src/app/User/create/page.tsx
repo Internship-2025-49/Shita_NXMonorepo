@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import * as React from "react"
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Button } from '@components';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components';
+import { Label } from '@components';
+import { Input } from '@components';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@components';
 
 
 export default function PersonCreate() {
@@ -50,44 +50,46 @@ export default function PersonCreate() {
         }
         }
     };
-    
+
     return (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <span className='font-bold py-2 block text-2xl text-center mb-5'>Add Data User</span>
-            <Card className="w-[550px]" onSubmit={addUser}>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
+            <span className="font-bold py-2 block text-2xl text-center mb-5">Add Data User</span>
+            
+            <Card className="w-full shadow-lg border">
                 <CardHeader>
                     <CardContent>
-                        <form>
-                            <div className="grid w-full items-center gap-4">
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name" className="text-lg" >Username</Label>
-                                    <Input id="username" placeholder="Username" className="text-lg p-5" onChange={(e: any) => setUsername(e.target.value)}/>
-                                </div>
+                        <form onSubmit={addUser} className="grid gap-6">
+                            <div className="flex flex-col space-y-2">
+                                <Label htmlFor="username" className="text-lg">Username</Label>
+                                <Input id="username" placeholder="Username" className="text-lg p-3" onChange={(e: any) => setUsername(e.target.value)}/>
+                            </div>
 
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name" className="text-lg" >Name</Label>
-                                    <Input id="name" placeholder="Name" className="text-lg p-5" onChange={(e: any) => setName(e.target.value)}/>
-                                </div>
+                            <div className="flex flex-col space-y-2">
+                                <Label htmlFor="name" className="text-lg">Name</Label>
+                                <Input id="name" placeholder="Name" className="text-lg p-3" onChange={(e: any) => setName(e.target.value)}/>
+                            </div>
 
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name" className="text-lg">Address</Label>
-                                    <Input id="address" placeholder="Address" className="text-lg p-5" onChange={(e: any) => setAddress(e.target.value)}/>
-                                </div>
+                            <div className="flex flex-col space-y-2">
+                                <Label htmlFor="address" className="text-lg">Address</Label>
+                                <Input id="address" placeholder="Address" className="text-lg p-3" onChange={(e: any) => setAddress(e.target.value)}/>
+                            </div>
 
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name" className="text-lg">Phone</Label>
-                                    <Input id="phone" placeholder="+62" className="text-lg p-5" onChange={(e: any) => setPhone(e.target.value)}/>
-                                </div>
+                            <div className="flex flex-col space-y-2">
+                                <Label htmlFor="phone" className="text-lg">Phone</Label>
+                                <Input id="phone" placeholder="+62" className="text-lg p-3" onChange={(e: any) => setPhone(e.target.value)}/>
+                            </div>
 
-                                <div className='w-full flex justify-center py-2'>
-                                    <Button className="w-80 p-5 text-white bg-black text-lg" variant="outline" size="sm">Submit</Button>
-                                </div>
+                            <div className="flex justify-center">
+                                <Button type="submit" className="w-full max-w-sm p-3 text-white bg-black text-lg hover:bg-gray-900">
+                                    Submit
+                                </Button>
                             </div>
                         </form>
                     </CardContent>
                 </CardHeader>
             </Card>
 
+            {/* Alert Dialog */}
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -98,12 +100,14 @@ export default function PersonCreate() {
                         <AlertDialogAction onClick={() => {
                             setIsOpen(false);
                             router.push("/User");
-                        }}>Close</AlertDialogAction>
+                        }}>
+                            Close
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
         </div>
-        
+
     );
 }
 

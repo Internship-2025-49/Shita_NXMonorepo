@@ -1,23 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
-} from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { fetcher } from "../libs/indes";
 import DataTable from "../components/tableUser";
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Label, Input, DialogFooter, AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "@components";
+import { Plus } from "lucide-react";
 
 export default function Users() {
     const [userList, setUserList] = useState<UserModel[]>([]);
@@ -89,14 +79,16 @@ export default function Users() {
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-5">
-                    <Button variant="destructive" size="sm" onClick={() => deleteUser(row.original.id)}>
+                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-500 text-red-700 hover:bg-red-100" onClick={() => deleteUser(row.original.id)}>
                         Delete
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => openEditDialog(row.original)}>
+
+                    <Button variant="outline" size="sm" className="m-1 p-2 border border-yellow-500 text-yellow-700 hover:bg-yellow-100" onClick={() => openEditDialog(row.original)}>
                         Edit
                     </Button>
+                    
                     <Link href={`/User/read/${row.original.id}`}>
-                        <Button variant="outline" size="sm">View</Button>
+                        <Button variant="outline" size="sm" className="m-1 p-2 border border-blue-500 text-blue-700 hover:bg-blue-100">View</Button>
                     </Link>
                 </div>
             ),
@@ -104,22 +96,23 @@ export default function Users() {
     ];
 
     return (
-        <div className="container mx-auto py-10">
-            <h2 className="text-2xl font-bold text-center mb-5">
-                List User - Counter: {userList.length}
-            </h2>
-    
-            {/* Tombol Create */}
-            <div className="flex justify-center">
-                <Link href="/User/create">
-                    <Button className="mb-4">Create New</Button>
-                </Link>
+            <div className="container mx-auto py-10">
+                <div className="flex items-center justify-start">
+                    <h2 className="text-2xl font-bold mb-7 ml-15 mr-243">
+                        All Data: {userList.length}
+                    </h2>
+
+                    <Link href="/User/create">
+                        <Button className="mb-7 bg-green-800 hover:bg-green-700 text-white flex items-center gap-2">
+                        <Plus size={20} />
+                        </Button>
+                    </Link>
             </div>
     
             <div className="w-full overflow-auto">
                 <DataTable columns={columns} data={userList} />
             </div>
-    
+            
             {/* Dialog Edit */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
@@ -136,11 +129,11 @@ export default function Users() {
                             <Input 
                                 id="username" 
                                 className="col-span-3" 
-                                value={selectedUser?.name || ""}
-                                onChange={(e) => setSelectedUser(prev => prev ? { ...prev, name: e.target.value } : null)}
+                                value={selectedUser?.username || ""}
+                                onChange={(e) => setSelectedUser(prev => prev ? { ...prev, username: e.target.value } : null)}
                             />
                         </div>
-
+    
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">Name</Label>
                             <Input 
@@ -172,7 +165,9 @@ export default function Users() {
                         </div>
     
                         <DialogFooter>
-                            <Button type="submit">Save changes</Button>
+                            <Button type="submit" className="bg-gray-700 hover:bg-gray-800 text-white">
+                                Save changes
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
