@@ -16,7 +16,7 @@ export default function Detail() {
     const { data: user, isLoading, error } = useQuery({
         queryKey: ["user", userId],
         queryFn: () => fetchUserById(userId),
-        enabled: !!userId, // Fetch hanya jika ID ada
+        enabled: !!userId, 
     });
 
     if (isLoading) return <div>Loading...</div>;
