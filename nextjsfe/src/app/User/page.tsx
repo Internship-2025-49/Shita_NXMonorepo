@@ -1,6 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient,  useMutation} from "@tanstack/react-query";
 import { GET } from "../utils/queries/users/route"
+import { DELETE } from "../utils/queries/users/[id]/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
@@ -40,19 +41,18 @@ export default function Users() {
         }
     });
     
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: (id: number) => DELETE(id), onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+    });
+
+    if (isLoading) return <div>Loading...</div>;
+
     if (error) {
         console.error("Error fetching users:", error.message);
     }
-
-    // const queryClient = useQueryClient();
-    // const mutation = useMutation({
-    //     mutationFn: (id: number) => DELETE({ id }), onSuccess: () => {
-    //         queryClient.invalidateQueries({ queryKey: ['users'] });
-    //     },
-    // });
-
-    if (isLoading) return <div>Loading...</div>;
-    
     const openEditDialog = (user: UserModel) => {
         setSelectedUser(user);
         setIsDialogOpen(true);
@@ -89,9 +89,9 @@ export default function Users() {
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-5">
-                    {/* <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => mutation.mutate(row.original.id)}>
+                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => mutation.mutate(row.original.id)}>
                         Delete
-                    </Button> */}
+                    </Button>
 
                     <Button variant="outline" size="sm" className="m-1 p-2 border border-yellow-500 text-yellow-700 hover:bg-yellow-100" onClick={() => openEditDialog(row.original)}>
                         Edit

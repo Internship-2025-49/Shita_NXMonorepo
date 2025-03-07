@@ -20,12 +20,12 @@ export async function GET() {
 
     const result = await res.json();
 
-    console.log("Fetched users:", result); // Debugging
+    console.log("Fetched users:", result);
 
-    return result; // Jangan pakai NextResponse.json()
+    return result;
   } catch (error: any) {
     console.error("Error fetching users:", error);
-    return { error: error.message }; // Pastikan return berbentuk objek
+    return { error: error.message };
   }
 }
 

@@ -42,21 +42,24 @@ export async function PUT(request: NextRequest,{ params }: { params: { id: numbe
     }
 }
 
-export async function DELETE(request: NextRequest,{ params }: { params: { id: number } }) {
+export async function DELETE( id: number ) {
     try {
         const token = await getAuthToken();
         const apiKey = await getApiKey(token);
         
-        const res = await fetch(`http://localhost:3000/api/users/data/${params.id}`, {
-            next: { revalidate: 10 },
+        const res = await fetch(`http://localhost:3000/api/users/data/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'nx-api': apiKey
             }
-        })
-        const data = await res.json();
-        return NextResponse.json(data)
+        });
+
+        if (!res.ok) {
+            throw new Error(`Failed to delete user with id ${id}`);
+        }
+
+        return await res.json();
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
