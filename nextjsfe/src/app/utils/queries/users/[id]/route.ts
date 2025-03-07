@@ -21,26 +21,29 @@ export async function GET(request : NextRequest,{ params }: { params: { id: numb
     }
 }
 
-export async function PUT(request: NextRequest,{ params }: { params: { id: number } }) {
+export async function PUT(id: number, updateData: any) {
     try {
         const token = await getAuthToken();
         const apiKey = await getApiKey(token);
-        const body = await request.json();
-        
-        const res = await fetch(`http://localhost:3000/api/users/data/${params.id}`, {
+
+        const res = await fetch(`http://localhost:3000/api/users/data/${id}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'nx-api': apiKey
+                'nx-api': apiKey,
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body),
-        })
+            body: JSON.stringify(updateData),
+        });
+
         const data = await res.json();
-        return NextResponse.json(data)
+        return data;
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("PUT Error:", error);
+        throw new Error(error.message);
     }
 }
+
 
 export async function DELETE( id: number ) {
     try {

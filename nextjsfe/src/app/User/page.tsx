@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useQuery, useQueryClient,  useMutation} from "@tanstack/react-query";
 import { GET } from "../utils/queries/users/route"
-import { DELETE } from "../utils/queries/users/[id]/route"
+import { DELETE, PUT } from "../utils/queries/users/[id]/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
@@ -13,19 +14,15 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 
 export default function Users() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-
+    const queryClient = useQueryClient();
+       
+    //GET All Data
     const { data: users = [], isLoading, error } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
@@ -41,43 +38,60 @@ export default function Users() {
         }
     });
     
-    const queryClient = useQueryClient();
+    //DELETE Data
     const mutation = useMutation({
         mutationFn: (id: number) => DELETE(id), onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
         },
     });
 
+    //PUT Data
+    const updateUser = useMutation({
+        mutationFn: async ({ id, updateData }: { id: number; updateData: any }) => {
+            return await PUT(id, updateData);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+        },
+        onError: (error) => {
+            console.error("Update Error:", error);
+            alert("Gagal memperbarui data pengguna.");
+        }
+    });
+
+    const handleUpdateUser = (e: React.FormEvent) => {
+        e.preventDefault();
+    
+        if (!selectedUser) {
+            alert("No user selected!");
+            return;
+        }
+    
+        updateUser.mutate(
+            { id: selectedUser.id, updateData: selectedUser },
+            {
+                onSuccess: () => {
+                    setIsDialogOpen(false); 
+                    setIsAlertOpen(true);
+                },
+                onError: (error) => {
+                    console.error("Update Error:", error);
+                    alert("Gagal memperbarui data pengguna.");
+                },
+            }
+        );
+    };
+
+    const openEditDialog = (user: UserModel) => {
+        setSelectedUser(user);
+        setIsDialogOpen(true);
+    };
+    
     if (isLoading) return <div>Loading...</div>;
 
     if (error) {
         console.error("Error fetching users:", error.message);
     }
-    const openEditDialog = (user: UserModel) => {
-        setSelectedUser(user);
-        setIsDialogOpen(true);
-    };
-
-    console.log('setValue:', isDialogOpen)
-
-    const updateUser = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!selectedUser) return;
-
-        const res = await fetch(`/utils/queries/users/${selectedUser.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(selectedUser),
-        });
-
-        const content = await res.json();
-        if (content) {
-            setIsDialogOpen(false);
-            setIsAlertOpen(true);
-        } else {
-            alert(content.message);
-        }
-    };
 
     const columns: ColumnDef<UserModel>[] = [
         { accessorKey: "id", header: "ID" },
@@ -142,7 +156,7 @@ export default function Users() {
                         </DialogDescription>
                     </DialogHeader>
     
-                    <form onSubmit={updateUser} className="grid gap-4 py-4">
+                    <form onSubmit={handleUpdateUser} className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="username" className="text-right">Username</Label>
                             <Input 
