@@ -50,15 +50,15 @@ export default function Users() {
         mutationFn: async ({ id, updateData }: { id: number; updateData: any }) => {
             return await PUT(id, updateData);
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["users"] });
+        onSuccess: (_, { id }) => {
+            queryClient.invalidateQueries({ queryKey: ["user", id] as const }); 
         },
         onError: (error) => {
             console.error("Update Error:", error);
             alert("Gagal memperbarui data pengguna.");
         }
     });
-
+    
     const handleUpdateUser = (e: React.FormEvent) => {
         e.preventDefault();
     
