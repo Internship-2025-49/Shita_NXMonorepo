@@ -17,10 +17,15 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 
 export default function Users() {
+    const queryClient = useQueryClient();
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-    const queryClient = useQueryClient();
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
        
     //GET All Data
     const { data: users = [], isLoading, error } = useQuery({
@@ -39,9 +44,20 @@ export default function Users() {
     });
     
     //DELETE Data
+    const handleDeleteClick = (id: number) => {
+        setSelectedUserId(id);
+        setIsDeleteDialogOpen(true);
+    };
+    
     const mutation = useMutation({
-        mutationFn: (id: number) => DELETE(id), onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        mutationFn: (id: number) => DELETE(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+            setIsDeleteDialogOpen(false);
+            setIsDeleteSuccessOpen(true);
+        },
+        onError: (error) => {
+            alert(`Failed to delete user: ${error.message}`);
         },
     });
 
@@ -55,7 +71,7 @@ export default function Users() {
         },
         onError: (error) => {
             console.error("Update Error:", error);
-            alert("Gagal memperbarui data pengguna.");
+            alert("Failed to update user data.");
         }
     });
     
@@ -76,7 +92,7 @@ export default function Users() {
                 },
                 onError: (error) => {
                     console.error("Update Error:", error);
-                    alert("Gagal memperbarui data pengguna.");
+                    alert("Failed to update user data.");
                 },
             }
         );
@@ -103,7 +119,7 @@ export default function Users() {
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-5">
-                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => mutation.mutate(row.original.id)}>
+                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => handleDeleteClick(row.original.id)}>
                         Delete
                     </Button>
 
@@ -215,6 +231,38 @@ export default function Users() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsAlertOpen(false)}>Close</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure for delete this data?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Deleted data cannot be recovered.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogAction>
+                        <AlertDialogAction
+                            className="bg-red-600 text-white hover:bg-red-700"
+                            onClick={() => selectedUserId && mutation.mutate(selectedUserId)}
+                            disabled={mutation.isPending}
+                        >
+                            {mutation.isPending ? "Removing..." : "Delete"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={isDeleteSuccessOpen} onOpenChange={setIsDeleteSuccessOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Success for deleting data!</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction onClick={() => setIsDeleteSuccessOpen(false)}>Close</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
