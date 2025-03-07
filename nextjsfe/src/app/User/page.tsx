@@ -1,4 +1,6 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
+import { GET } from "../utils/queries/users/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
@@ -17,41 +19,40 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useQuery } from "@tanstack/react-query";
-import { GET } from "../utils/queries/users/route"
 
 export default function Users() {
-    const [userList, setUserList] = useState<UserModel[]>([]);
-    // const { data, error } = useSWR<{ result: UserModel[] }>("/utils/queries/users", fetcher);
-    
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
 
-    //GET all data
-    // useEffect(() => {
-    //     if (data && data.result) {
-    //       setUserList(data.result);
-    //     }
-    // }, [data]);
+    const { data: users = [], isLoading, error } = useQuery({
+        queryKey: ['users'],
+        queryFn: async () => {
+            const res = await GET();
+            
+            if (!res || res.error) {
+                throw new Error(res.error || "Failed to fetch users");
+            }
+    
+            console.log("Users data from API:", res);
+    
+            return Array.isArray(res) ? res : [];
+        }
+    });
+    
+    if (error) {
+        console.error("Error fetching users:", error.message);
+    }
 
-    const { data: users = [], isLoading } = useQuery({ queryKey: ['users'], queryFn: GET });
+    // const queryClient = useQueryClient();
+    // const mutation = useMutation({
+    //     mutationFn: (id: number) => DELETE({ id }), onSuccess: () => {
+    //         queryClient.invalidateQueries({ queryKey: ['users'] });
+    //     },
+    // });
 
     if (isLoading) return <div>Loading...</div>;
-
-    const deleteUser = async (id: number) => {
-        const res = await fetch(`/utils/queries/users/${id}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        const content = await res.json();
-
-        if (content.success > 0) {
-            setUserList(userList.filter((user) => user.id !== id));
-        }
-    };
-
+    
     const openEditDialog = (user: UserModel) => {
         setSelectedUser(user);
         setIsDialogOpen(true);
@@ -73,11 +74,6 @@ export default function Users() {
         if (content) {
             setIsDialogOpen(false);
             setIsAlertOpen(true);
-            
-
-            setUserList((prev) =>
-                prev.map((p) => (p.id === selectedUser.id ? selectedUser : p))
-            );
         } else {
             alert(content.message);
         }
@@ -93,9 +89,9 @@ export default function Users() {
             header: "Actions",
             cell: ({ row }) => (
                 <div className="flex gap-5">
-                    <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => deleteUser(row.original.id)}>
+                    {/* <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => mutation.mutate(row.original.id)}>
                         Delete
-                    </Button>
+                    </Button> */}
 
                     <Button variant="outline" size="sm" className="m-1 p-2 border border-yellow-500 text-yellow-700 hover:bg-yellow-100" onClick={() => openEditDialog(row.original)}>
                         Edit
