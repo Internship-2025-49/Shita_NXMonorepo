@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import useSWR from "swr";
+import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { fetcher } from "../lib";
 import { Button } from "@/components/ui/button";
 import DataTable from "../components/tableUser";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,25 +17,27 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useQuery } from "@tanstack/react-query";
+import { GET } from "../utils/queries/users/route"
 
 export default function Users() {
     const [userList, setUserList] = useState<UserModel[]>([]);
-    const { data, error } = useSWR<{ result: UserModel[] }>("/utils/queries/users", fetcher);
+    // const { data, error } = useSWR<{ result: UserModel[] }>("/utils/queries/users", fetcher);
     
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
 
-    useEffect(() => {
-        if (data && data.result) {
-          setUserList(data.result);
-        }
-    }, [data]);
+    //GET all data
+    // useEffect(() => {
+    //     if (data && data.result) {
+    //       setUserList(data.result);
+    //     }
+    // }, [data]);
 
-    console.log('data: ', data)
+    const { data: users = [], isLoading } = useQuery({ queryKey: ['users'], queryFn: GET });
 
-    if (error) return <div>Failed to load</div>;
-    if (!data) return <div>Loading...</div>;
+    if (isLoading) return <div>Loading...</div>;
 
     const deleteUser = async (id: number) => {
         const res = await fetch(`/utils/queries/users/${id}`, {
@@ -113,7 +113,7 @@ export default function Users() {
         <div className="container mx-auto py-10">
             <div className="flex items-center justify-start bg-gray-700 p-4 rounded-lg shadow-md w-[1010px] mb-5 mx-auto">
               <h2 className="text-2xl ml-6 text-white">
-                All Data: {userList.length}
+                All Data: {Array.isArray(users) ? users.length : 0}
               </h2>
 
               <Link href="/User/create" className="ml-auto">
@@ -133,7 +133,7 @@ export default function Users() {
             </div>
 
             <div className="w-full overflow-auto">
-                <DataTable columns={columns} data={userList} />
+                <DataTable columns={columns} data={Array.isArray(users) ? users : []} />
             </div>
             
             {/* Dialog Edit */}
