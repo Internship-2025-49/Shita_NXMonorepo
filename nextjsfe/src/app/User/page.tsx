@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useQueryClient,  useMutation} from "@tanstack/react-query";
 import { useUsers } from '../hook/queries/user';
-import { PUT } from "../utils/queries/users/[id]/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
@@ -15,12 +13,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
-import { useDeleteUser } from "../hook/mutations/user";
+import { useDeleteUser, usePutUser } from "../hook/mutations/user";
 
 export default function Users() {
-    const queryClient = useQueryClient();
-    const { data: users = [], isLoading, error } = useUsers(); 
-
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
@@ -38,18 +33,7 @@ export default function Users() {
     const mutation = useDeleteUser();
 
     //PUT Data
-    const updateUser = useMutation({
-        mutationFn: async ({ id, updateData }: { id: number; updateData: any }) => {
-            return await PUT(id, updateData);
-        },
-        onSuccess: (_, { id }) => {
-            queryClient.invalidateQueries({ queryKey: ["user", id] as const }); 
-        },
-        onError: (error) => {
-            console.error("Update Error:", error);
-            alert("Failed to update user data.");
-        }
-    });
+    const updateUser = usePutUser();
     
     const handleUpdateUser = (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,6 +64,8 @@ export default function Users() {
     };
     
     //GET All Data
+    const { data: users = [], isLoading, error } = useUsers(); 
+    
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
 
