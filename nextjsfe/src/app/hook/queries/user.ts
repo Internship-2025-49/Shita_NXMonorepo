@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { GET } from "../utils/queries/users/route";
-import { fetchUserById } from "../utils/queries/users/[id]/route";
+import { GET } from "../../utils/queries/users/route";
+import { fetchUserById } from "../../utils/queries/users/[id]/route";
 import { useParams } from "next/navigation";
 
 //GET All Data

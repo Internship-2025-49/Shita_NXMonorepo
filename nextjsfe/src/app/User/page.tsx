@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useQueryClient,  useMutation} from "@tanstack/react-query";
-import { useUsers } from '../queries/user';
-import { DELETE, PUT } from "../utils/queries/users/[id]/route"
+import { useUsers } from '../hook/queries/user';
+import { PUT } from "../utils/queries/users/[id]/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { UserModel } from "../types/user";
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import { useDeleteUser } from "../hook/mutations/user";
 
 export default function Users() {
     const queryClient = useQueryClient();
@@ -23,6 +24,7 @@ export default function Users() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
+
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -33,17 +35,7 @@ export default function Users() {
         setIsDeleteDialogOpen(true);
     };
     
-    const mutation = useMutation({
-        mutationFn: (id: number) => DELETE(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["users"] });
-            setIsDeleteDialogOpen(false);
-            setIsDeleteSuccessOpen(true);
-        },
-        onError: (error) => {
-            alert(`Failed to delete user: ${error.message}`);
-        },
-    });
+    const mutation = useDeleteUser();
 
     //PUT Data
     const updateUser = useMutation({
