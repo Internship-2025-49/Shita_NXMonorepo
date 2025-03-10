@@ -3,17 +3,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { getApiKey, getAuthToken } from "../../utils/authHelper";
+import { usePostUser } from "@/app/hook/mutations/user";
 
 export default function PersonCreate() {
     const router = useRouter();
-    const queryClient = useQueryClient();
     const [isOpen, setIsOpen] = useState(false);
     
     const [username, setUsername] = useState("");
@@ -21,43 +19,13 @@ export default function PersonCreate() {
     const [address, setAddress] = useState("");
     const [phone, setPhone] = useState("");
 
-    const createUser = useMutation({
-        mutationFn: async (newUser: any) => {
-            const token = await getAuthToken();
-            const apiKey = await getApiKey(token);
-
-            const res = await fetch("http://localhost:3000/api/users/data", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                    "nx-api": apiKey
-                },
-                body: JSON.stringify(newUser),
-            });
-
-            const text = await res.text();
-            console.log("Response Text:", text);
-
-            try {
-                return JSON.parse(text);
-            } catch (error) {
-                throw new Error(`Invalid JSON Response: ${text}`);
-            }
-        },
-        onSuccess: () => {
-            setIsOpen(true);
-            queryClient.invalidateQueries({ queryKey: ["users"] }); 
-        },
-        onError: (error) => {
-            console.error("Create Error:", error);
-            alert(`Gagal membuat pengguna: ${error.message}`);
-        }
-    });
+    const createUser = usePostUser();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createUser.mutate({ username, name, address, phone });
+        createUser.mutate({ username, name, address, phone }, {
+            onSuccess: () => setIsOpen(true) 
+        });
     };
 
     return (

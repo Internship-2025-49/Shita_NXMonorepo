@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DELETE, PUT } from "../../utils/queries/users/[id]/route";
+import { getApiKey, getAuthToken } from "../../utils/authHelper";
 
 // DELETE Data
 export const useDeleteUser = () => {
@@ -36,3 +37,42 @@ export const usePutUser = () => {
     },
   })
 };
+
+//POST Data 
+export const usePostUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newUser: Record<string, any>) => {
+      if (!newUser) throw new Error("User data is required");
+
+      const token = await getAuthToken();
+      const apiKey = await getApiKey(token);
+
+      const res = await fetch("http://localhost:3000/api/users/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "nx-api": apiKey,
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Request failed: ${errorText}`);
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      console.error("Create Error:", error);
+      alert(`Gagal membuat pengguna: ${error.message}`);
+    },
+  });
+};
+
