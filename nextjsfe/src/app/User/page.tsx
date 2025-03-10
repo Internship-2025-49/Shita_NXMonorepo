@@ -18,7 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortc
 
 export default function Users() {
     const queryClient = useQueryClient();
-    const { data: users = [], isLoading, error } = useUsers(); // Gunakan useUsers
+    const { data: users = [], isLoading, error } = useUsers(); 
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -90,7 +90,7 @@ export default function Users() {
     //GET All Data
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
-    
+
     const columns: ColumnDef<UserModel>[] = [
         { accessorKey: "id", header: "ID" },
         { accessorKey: "username", header: "Username" },
