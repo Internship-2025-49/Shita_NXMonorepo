@@ -11,8 +11,8 @@ export default function DataTable<TData, TValue>({ columns, data } : {columns: C
 
   return (
     <div className="flex justify-center">
-      <div className="rounded-md border border-gray-400">
-        <Table className="w-full border-collapse">
+      <div className="rounded-md border border-gray-400 w-[1000px]">
+        <Table className="w-full border-collapse text-center">
           {/* Header */}
           <TableHeader className="bg-gray-700 text-white text-center">
             {table.getHeaderGroups().map((headerGroup) => (

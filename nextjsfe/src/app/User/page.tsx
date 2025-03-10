@@ -118,7 +118,7 @@ export default function Users() {
         {
             header: "Actions",
             cell: ({ row }) => (
-                <div className="flex gap-5">
+                <div className="flex justify-center gap-5">
                     <Button variant="destructive" size="sm" className="m-1 p-2 border border-red-400 text-white hover:bg-red-400" onClick={() => handleDeleteClick(row.original.id)}>
                         Delete
                     </Button>
@@ -222,7 +222,7 @@ export default function Users() {
                 </DialogContent>
             </Dialog>
     
-            {/* Alert Dialog */}
+            {/* Alert Dialog Edit*/}
             <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -235,6 +235,7 @@ export default function Users() {
                 </AlertDialogContent>
             </AlertDialog>
 
+            {/*Alert Dialog Delete*/}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
