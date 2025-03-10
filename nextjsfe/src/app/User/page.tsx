@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useQuery, useQueryClient,  useMutation} from "@tanstack/react-query";
-import { GET } from "../utils/queries/users/route"
+import { useQueryClient,  useMutation} from "@tanstack/react-query";
+import { useUsers } from '../queries/user';
 import { DELETE, PUT } from "../utils/queries/users/[id]/route"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -18,30 +18,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortc
 
 export default function Users() {
     const queryClient = useQueryClient();
+    const { data: users = [], isLoading, error } = useUsers(); // Gunakan useUsers
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
-
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-       
-    //GET All Data
-    const { data: users = [], isLoading, error } = useQuery({
-        queryKey: ['users'],
-        queryFn: async () => {
-            const res = await GET();
-            
-            if (!res || res.error) {
-                throw new Error(res.error || "Failed to fetch users");
-            }
-    
-            console.log("Users data from API:", res);
-    
-            return Array.isArray(res) ? res : [];
-        }
-    });
     
     //DELETE Data
     const handleDeleteClick = (id: number) => {
@@ -103,12 +87,10 @@ export default function Users() {
         setIsDialogOpen(true);
     };
     
-    if (isLoading) return <div>Loading...</div>;
-
-    if (error) {
-        console.error("Error fetching users:", error.message);
-    }
-
+    //GET All Data
+    if (isLoading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+    
     const columns: ColumnDef<UserModel>[] = [
         { accessorKey: "id", header: "ID" },
         { accessorKey: "username", header: "Username" },
