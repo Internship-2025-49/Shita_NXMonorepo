@@ -12,8 +12,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortcut, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { useDeleteUser, usePutUser } from "../hook/mutations/user";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { toast, Toaster } from "sonner"
 
 export default function Users() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,8 +25,10 @@ export default function Users() {
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [isDeleteSuccessOpen, setIsDeleteSuccessOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     
     //DELETE Data
     const handleDeleteClick = (id: number) => {
@@ -69,6 +75,10 @@ export default function Users() {
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
 
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedUsers = users.slice(startIndex, endIndex);
+
     const columns: ColumnDef<UserModel>[] = [
         { accessorKey: "id", header: "ID" },
         { accessorKey: "username", header: "Username" },
@@ -98,28 +108,57 @@ export default function Users() {
     return (
         <div className="container mx-auto py-10">
             <div className="flex items-center justify-start bg-gray-700 p-4 rounded-lg shadow-md w-[1010px] mb-5 mx-auto">
-              <h2 className="text-2xl ml-6 text-white">
-                All Data: {Array.isArray(users) ? users.length : 0}
-              </h2>
+                <Avatar>
+                    <AvatarImage src="https://unpkg.com/@mynaui/icons/icons/users-group.svg" className="invert" alt="people" />
+                    <AvatarFallback>People</AvatarFallback>
+                </Avatar>
 
-              <Link href="/User/create" className="ml-auto">
+              <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <h2 className="text-2xl ml-6 text-white">
+                            Table of Users Data 
+                        </h2>
+                    </HoverCardTrigger>
+                    
+                    <HoverCardContent className="w-80">
+                        <div className="flex justify-between space-x-4">
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-semibold">Shita Zeny</h4>
+
+                                <p className="text-sm">
+                                    From SMK Negeri 1 Cimahi, internship at</p>
+
+                                <p className="text-sm">PT. Infinys System Indonesia.</p>
+                            </div>
+                        </div>
+                    </HoverCardContent>
+                </HoverCard>
+
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild className="group">
+                    <DropdownMenuTrigger asChild className="group ml-auto">
                       <Button variant="ghost"><ChevronDown className="text-white group-hover:text-black transition-colors" size={20} /></Button>
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent className="w-56">
-                        <DropdownMenuItem>
-                          Add Data
-                          <DropdownMenuShortcut></DropdownMenuShortcut>
-                        </DropdownMenuItem>
+                        <Link href="/User/create" className="ml-auto">
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem>
+                                    Add User
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                        </Link>
+                        
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem>
+                                Total Data {Array.isArray(users) ? users.length : 0}
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
                     </DropdownMenuContent>
-                  </DropdownMenu>
-              </Link>
+                </DropdownMenu>
             </div>
 
             <div className="w-full overflow-auto">
-                <DataTable columns={columns} data={Array.isArray(users) ? users : []} />
+                <DataTable columns={columns} data={paginatedUsers} />
             </div>
             
             {/* Dialog Edit */}
@@ -206,28 +245,54 @@ export default function Users() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogAction>
+                        <Toaster richColors position="top-center" />
                         <AlertDialogAction
                             className="bg-red-600 text-white hover:bg-red-700"
-                            onClick={() => selectedUserId && mutation.mutate(selectedUserId)}
-                            disabled={mutation.isPending}
-                        >
+                            onClick={() => {
+                                if (selectedUserId) {
+                                  mutation.mutate(selectedUserId, {
+                                    onSuccess: () => {
+                                      toast("User deleted was successfully", {
+                                        description: "The user has been removed from the database.",
+                                      });
+                                    },
+                                    onError: () => {
+                                      toast.error("Failed to delete user", {
+                                        description: "Something went wrong while deleting the user.",
+                                      });
+                                    }
+                                  });
+                                }
+                              }}                              
+                            >
                             {mutation.isPending ? "Removing..." : "Delete"}
                         </AlertDialogAction>
+
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={isDeleteSuccessOpen} onOpenChange={setIsDeleteSuccessOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Success for deleting data!</AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setIsDeleteSuccessOpen(false)}>Close</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            {/*Pagination*/}
+            <Pagination className='pt-10'>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious 
+                            href="#" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}/>
+                    </PaginationItem>
+
+                    {Array.from({ length: Math.ceil(users.length / itemsPerPage) }, (_, i) => (
+                        <PaginationItem key={i}>
+                            <PaginationLink href="#" onClick={() => setCurrentPage(i + 1)} isActive={currentPage === i + 1}>{i + 1}</PaginationLink>
+                        </PaginationItem>
+                    ))}
+
+                    <PaginationItem>
+                        <PaginationNext href="#" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(users.length / itemsPerPage)))} className={currentPage === Math.ceil(users.length / itemsPerPage) ? "pointer-events-none opacity-50" : ""}/>
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
+
+
         </div>
-        
     );
 }

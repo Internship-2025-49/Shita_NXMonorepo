@@ -32,8 +32,7 @@ export const usePutUser = () => {
       return await PUT(id, updateData);
     },
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["user", id] });
-      queryClient.invalidateQueries({ queryKey: ["users"] }); 
+      queryClient.invalidateQueries({ queryKey: ["user", id, "users"] });
     },
   })
 };
@@ -71,7 +70,7 @@ export const usePostUser = () => {
     },
     onError: (error) => {
       console.error("Create Error:", error);
-      alert(`Gagal membuat pengguna: ${error.message}`);
+      alert(`Failed to create user: ${error.message}`);
     },
   });
 };
