@@ -17,11 +17,13 @@ import { useDeleteUser, usePutUser } from "../hook/mutations/user";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { toast, Toaster } from "sonner"
+import { toast } from "sonner"
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Users() {
+    const queryClient = useQueryClient();
+    
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -45,7 +47,9 @@ export default function Users() {
         e.preventDefault();
     
         if (!selectedUser) {
-            alert("No user selected!");
+            toast.error("No user selected!", {
+                description: "Please select a user before saving changes.",
+            });
             return;
         }
     
@@ -53,17 +57,24 @@ export default function Users() {
             { id: selectedUser.id, updateData: selectedUser },
             {
                 onSuccess: () => {
-                    setIsDialogOpen(false); 
-                    setIsAlertOpen(true);
+                    setIsDialogOpen(false);
+                    toast.success("User updated successfully!", {
+                        description: `User ${selectedUser.username} has been modified.`,
+                        icon: "✅",
+                    });
+    
+                    queryClient.invalidateQueries({ queryKey: ["users"] });
                 },
                 onError: (error) => {
                     console.error("Update Error:", error);
-                    alert("Failed to update user data.");
+                    toast.error("Failed to update user", {
+                        description: "Something went wrong while updating user data.",
+                    });
                 },
             }
         );
     };
-
+    
     const openEditDialog = (user: UserModel) => {
         setSelectedUser(user);
         setIsDialogOpen(true);
@@ -220,19 +231,6 @@ export default function Users() {
                     </form>
                 </DialogContent>
             </Dialog>
-    
-            {/* Alert Dialog Edit*/}
-            <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Updated User Data Successfully</AlertDialogTitle>
-                        <AlertDialogDescription>Your changes have been saved.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsAlertOpen(false)}>Close</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
 
             {/*Alert Dialog Delete*/}
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -245,7 +243,6 @@ export default function Users() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogAction className="bg-gray-700 hover:bg-gray-800 text-white" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogAction>
-                        <Toaster richColors position="top-center" />
                         <AlertDialogAction
                             className="bg-red-600 text-white hover:bg-red-700"
                             onClick={() => {
@@ -254,6 +251,7 @@ export default function Users() {
                                     onSuccess: () => {
                                       toast("User deleted was successfully", {
                                         description: "The user has been removed from the database.",
+                                        icon: "✅",
                                       });
                                     },
                                     onError: () => {

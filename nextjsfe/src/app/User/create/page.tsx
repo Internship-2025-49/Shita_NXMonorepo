@@ -3,16 +3,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { usePostUser } from "@/app/hook/mutations/user";
 
 export default function PersonCreate() {
     const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false);
     
     const [username, setUsername] = useState("");
     const [name, setName] = useState("");
@@ -24,7 +23,19 @@ export default function PersonCreate() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         createUser.mutate({ username, name, address, phone }, {
-            onSuccess: () => setIsOpen(true) 
+            onSuccess: () => {
+                toast.success("User created successfully!", {
+                    description: `User ${username} has been added.`,
+                    icon: "✅",
+                });
+
+                router.push("/User");
+            },
+            onError: () => {
+                toast.error("Failed to create user", {
+                    description: "Something went wrong while adding the user.",
+                });
+            }
         });
     };
 
@@ -70,24 +81,6 @@ export default function PersonCreate() {
                     </form>
                 </CardContent>
             </Card>
-
-            {/* Alert Dialog */}
-            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Created User Data Successfully</AlertDialogTitle>
-                        <AlertDialogDescription>You can close this page.</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => {
-                            setIsOpen(false);
-                            router.push("/User");
-                        }}>
-                            Close
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </div>
     );
 }
