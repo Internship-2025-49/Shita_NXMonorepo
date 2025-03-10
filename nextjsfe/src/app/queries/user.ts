@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "../utils/queries/users/route";
+import { fetchUserById } from "../utils/queries/users/[id]/route";
 import { useParams } from "next/navigation";
 
 //GET All Data
@@ -26,7 +27,7 @@ export const useUsersById = () => {
     queryFn: async () => {
       if (!userId) throw new Error("User ID is required");
 
-      const res = await GET(userId);
+      const res = await fetchUserById(userId);
       if (!res || res.error) {
         throw new Error(res?.error || "Failed to show user data");
       }

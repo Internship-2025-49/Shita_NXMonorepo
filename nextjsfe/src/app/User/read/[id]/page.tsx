@@ -4,20 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserById } from "../../../utils/queries/users/[id]/route";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useUsersById } from "@/app/queries/user";
 
 export default function Detail() {
-    const params = useParams();
     const router = useRouter();
-    const userId = Number(params?.id);
 
-    const { data: user, isLoading, error } = useQuery({
-        queryKey: ["user", userId],
-        queryFn: () => fetchUserById(userId),
-        enabled: !!userId, 
-    });
+    const { data: user, isLoading, error } = useUsersById();
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
