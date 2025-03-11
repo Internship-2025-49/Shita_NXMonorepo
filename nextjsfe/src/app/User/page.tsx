@@ -62,6 +62,28 @@ export default function Users() {
             });
             return;
         }
+
+        const originalUser = users.find(user => user.id === selectedUser.id);
+    
+        if (!originalUser) {
+            toast.error("User data not found!", {
+                description: "Something went wrong while fetching the original data.",
+            });
+            return;
+        }
+
+        const isDataSame =
+            selectedUser.name === originalUser.name &&
+            selectedUser.address === originalUser.address &&
+            selectedUser.phone === originalUser.phone;
+    
+        if (isDataSame) {
+            toast.warning("No changes detected!", {
+                description: "You must modify at least one field before saving.",
+                icon: "⚠️",
+            });
+            return;
+        }
     
         updateUser.mutate(
             { id: selectedUser.id, updateData: selectedUser },
@@ -83,7 +105,7 @@ export default function Users() {
                 },
             }
         );
-    };
+    };    
     
     const openEditDialog = (user: UserModel) => {
         setSelectedUser(user);
@@ -202,8 +224,9 @@ export default function Users() {
                             <Label htmlFor="username" className="text-right">Username</Label>
                             <Input 
                                 id="username" 
-                                className="col-span-3" 
+                                className="col-span-3 bg-gray-300 cursor-not-allowed" 
                                 value={selectedUser?.username || ""}
+                                disabled
                                 onChange={(e) => setSelectedUser(prev => prev ? { ...prev, username: e.target.value } : null)}
                             />
                         </div>

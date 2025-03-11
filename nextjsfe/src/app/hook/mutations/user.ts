@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DELETE, PUT } from "../../utils/queries/users/[id]/route";
 import { getApiKey, getAuthToken } from "../../utils/authHelper";
+import { toast } from "sonner";
 
 // DELETE Data
 export const useDeleteUser = () => {
@@ -45,6 +46,11 @@ export const usePostUser = () => {
     mutationFn: async (newUser: Record<string, any>) => {
       if (!newUser) throw new Error("User data is required");
 
+      if (!newUser.username || /\s/.test(newUser.username.trim())) {
+        toast.error("Usernames cannot contain spaces!");
+        throw new Error("Usernames cannot contain spaces!");
+      }
+
       const token = await getAuthToken();
       const apiKey = await getApiKey(token);
 
@@ -68,10 +74,7 @@ export const usePostUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error) => {
-      console.error("Create Error:", error);
-      alert(`Failed to create user: ${error.message}`);
-    },
   });
 };
+
 
