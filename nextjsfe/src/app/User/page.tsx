@@ -19,6 +19,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { toast } from "sonner"
 import { useQueryClient } from '@tanstack/react-query';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/drawer";
 
 export default function Users() {
     const queryClient = useQueryClient();
@@ -31,6 +32,15 @@ export default function Users() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [selectedUserView, setSelectedUserView] = useState<UserModel | null>(null);
+
+    //View Data
+    const openDrawer = (user: UserModel) => {
+        setSelectedUserView(user); 
+        setIsDrawerOpen(true); 
+    };
     
     //DELETE Data
     const handleDeleteClick = (id: number) => {
@@ -108,9 +118,9 @@ export default function Users() {
                         Edit
                     </Button>
                     
-                    <Link href={`/User/read/${row.original.id}`}>
-                        <Button variant="outline" size="sm" className="m-1 p-2 border border-blue-500 text-blue-700 hover:bg-blue-100">View</Button>
-                    </Link>
+                    <Button variant="outline" size="sm" className="m-1 p-2 border border-blue-500 text-blue-700 hover:bg-blue-100" onClick={() => openDrawer(row.original)}>
+                        View
+                    </Button>
                 </div>
             ),
         },
@@ -133,13 +143,16 @@ export default function Users() {
                     
                     <HoverCardContent className="w-80">
                         <div className="flex justify-between space-x-4">
+                            <Avatar>
+                                <AvatarImage src="https://unpkg.com/@mynaui/icons/icons/funny-square.svg" />
+                                <AvatarFallback>square</AvatarFallback>
+                            </Avatar>
+
                             <div className="space-y-1">
                                 <h4 className="text-sm font-semibold">Shita Zeny</h4>
 
                                 <p className="text-sm">
-                                    From SMK Negeri 1 Cimahi, internship at</p>
-
-                                <p className="text-sm">PT. Infinys System Indonesia.</p>
+                                    From SMK Negeri 1 Cimahi, internship at PT. Infinys System Indonesia.</p>
                             </div>
                         </div>
                     </HoverCardContent>
@@ -147,20 +160,22 @@ export default function Users() {
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild className="group ml-auto">
-                      <Button variant="ghost"><ChevronDown className="text-white group-hover:text-black transition-colors" size={20} /></Button>
+                        <Button variant="ghost" className="p-2">
+                            <ChevronDown className="text-white group-hover:text-black transition-colors" size={20} aria-label="Toggle menu"/>
+                        </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent className="w-56">
-                        <Link href="/User/create" className="ml-auto">
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>
+                    <DropdownMenuContent className="w-56 p-2 bg-white dark:bg-gray-800 shadow-md rounded-lg border border-gray-200 dark:border-gray-700">
+                        <DropdownMenuGroup>
+                            <Link href="/User/create">
+                                <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     Add User
                                 </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                        </Link>
-                        
+                            </Link>
+                        </DropdownMenuGroup>
+
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="flex items-center gap-2 px-3 py-2 rounded-md">
                                 Total Data {Array.isArray(users) ? users.length : 0}
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
@@ -290,7 +305,37 @@ export default function Users() {
                 </PaginationContent>
             </Pagination>
 
-
+            {/*Drawer View User*/}
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <DrawerContent className='rounded-lg shadow-lg'>
+                    <div className="mx-auto w-full max-w-sm p-4">
+                        <DrawerHeader>
+                            <DrawerTitle className='text-center'>View User Data</DrawerTitle>
+                            <DrawerDescription className='text-center'>Details of the selected user.</DrawerDescription>
+                        </DrawerHeader>
+                        <div className="space-y-4">
+                            {selectedUserView && [
+                                { label: "Username", value: selectedUserView.username || "N/A" },
+                                { label: "Name", value: selectedUserView.name || "N/A" },
+                                { label: "Address", value: selectedUserView.address || "N/A" },
+                                { label: "Phone", value: selectedUserView.phone || "N/A" },
+                            ].map((field) => (
+                                <div key={field.label} className="flex flex-col space-y-1">
+                                    <Label htmlFor={field.label.toLowerCase()} className="text-gray-700 text-sm font-medium">
+                                        {field.label}
+                                    </Label>
+                                    <Input
+                                        id={field.label.toLowerCase()}
+                                        value={field.value}
+                                        readOnly
+                                        className="p-2 border border-gray-300 bg-gray-100 rounded-md"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </DrawerContent>
+            </Drawer>
         </div>
     );
 }
